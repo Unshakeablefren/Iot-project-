@@ -1,0 +1,218 @@
+[
+    {
+        "id": "5230c72.fadcf38",
+        "type": "tab",
+        "label": "Sheet 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "39b15117.b0c81e",
+        "type": "http request",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://api.openweathermap.org/data/2.5/weather?q=Milan,it&APPID=68004bf0d30ffc9f9c7c035516266a70",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 290,
+        "y": 380,
+        "wires": [
+            [
+                "b158b40a.dff4c8"
+            ]
+        ]
+    },
+    {
+        "id": "b5b038b5.28c418",
+        "type": "inject",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "39b15117.b0c81e"
+            ]
+        ]
+    },
+    {
+        "id": "b158b40a.dff4c8",
+        "type": "json",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 340,
+        "y": 140,
+        "wires": [
+            [
+                "b4e557dd.b41a78",
+                "1a87348b.bd740b"
+            ]
+        ]
+    },
+    {
+        "id": "b4e557dd.b41a78",
+        "type": "function",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "func": "var umidità = msg.payload.main.humidity; \nmsg.payload = umidità; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 490,
+        "y": 80,
+        "wires": [
+            [
+                "b9293d29.ce7ac",
+                "99ac8715.60a0b8"
+            ]
+        ]
+    },
+    {
+        "id": "1a87348b.bd740b",
+        "type": "function",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "func": "var tempk = msg.payload.main.temp; \nvar tempc = (tempk - 273.15);\nmsg.payload = tempc; \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 510,
+        "y": 220,
+        "wires": [
+            [
+                "139795f8.b523ea",
+                "a06c3bd4.f760a8"
+            ]
+        ]
+    },
+    {
+        "id": "139795f8.b523ea",
+        "type": "debug",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "33a76d18.8c3642",
+        "type": "mqtt out",
+        "z": "5230c72.fadcf38",
+        "name": "MQTT OUT TEMP",
+        "topic": "channels/1699701/publish/fields/1/RAAQAJD5AR67DHZI",
+        "qos": "",
+        "retain": "",
+        "broker": "762c0b1f.981b14",
+        "x": 920,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "b9293d29.ce7ac",
+        "type": "mqtt out",
+        "z": "5230c72.fadcf38",
+        "name": "MQTT OUT HUMIDITY",
+        "topic": "channels/1699701/publish/fields/2/RAAQAJD5AR67DHZI",
+        "qos": "",
+        "retain": "",
+        "broker": "762c0b1f.981b14",
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "99ac8715.60a0b8",
+        "type": "debug",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a06c3bd4.f760a8",
+        "type": "delay",
+        "z": "5230c72.fadcf38",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 710,
+        "y": 260,
+        "wires": [
+            [
+                "33a76d18.8c3642"
+            ]
+        ]
+    },
+    {
+        "id": "762c0b1f.981b14",
+        "type": "mqtt-broker",
+        "name": "Thingspeak MQTT Broker",
+        "broker": "mqtt3.thingspeak.com",
+        "port": "1883",
+        "clientid": "LyYPIDkWCSwmMiYrEDYjCBA",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
